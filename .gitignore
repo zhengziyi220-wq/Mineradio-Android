@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Build
+dist/
+public/dist/
+
+# Android
+android/app/build/
+android/.gradle/
+android/build/
+android/capacitor-android/build/
+*.apk
+*.aab
+
+# Capacitor
+.capacitor/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Env
+.env
+.env.local

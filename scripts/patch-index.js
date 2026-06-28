@@ -8,7 +8,12 @@
 const fs = require('fs');
 const path = require('path');
 
-const SRC = path.join(__dirname, '..', '..', 'Mineradio', 'public', 'index.html');
+// CI 环境中 Mineradio checkout 到 _upstream/，本地开发时在 ../Mineradio/
+const UPSTREAM_BASE = path.join(__dirname, '..', '_upstream');
+const LOCAL_BASE = path.join(__dirname, '..', '..', 'Mineradio');
+const UPSTREAM_PUBLIC = path.join(UPSTREAM_BASE, 'public', 'index.html');
+const BASE = fs.existsSync(UPSTREAM_PUBLIC) ? UPSTREAM_BASE : LOCAL_BASE;
+const SRC = path.join(BASE, 'public', 'index.html');
 const DEST = path.join(__dirname, '..', 'public', 'index.html');
 
 const ANDROID_ADAPTER = `
@@ -68,7 +73,7 @@ function patchIndex() {
   console.log(`✅ Patched index.html → ${DEST} (${sizeKB} KB)`);
 
   // 6. 复制 vendor 目录
-  const vendorSrc = path.join(__dirname, '..', '..', 'Mineradio', 'public', 'vendor');
+  const vendorSrc = path.join(BASE, 'public', 'vendor');
   const vendorDest = path.join(__dirname, '..', 'public', 'vendor');
   if (fs.existsSync(vendorSrc)) {
     copyDir(vendorSrc, vendorDest);
@@ -76,7 +81,7 @@ function patchIndex() {
   }
 
   // 7. 复制其他静态资源
-  const assetsSrc = path.join(__dirname, '..', '..', 'Mineradio', 'public', 'assets');
+  const assetsSrc = path.join(BASE, 'public', 'assets');
   const assetsDest = path.join(__dirname, '..', 'public', 'assets');
   if (fs.existsSync(assetsSrc)) {
     copyDir(assetsSrc, assetsDest);
@@ -84,7 +89,7 @@ function patchIndex() {
   }
 
   // 8. 复制默认用户存档
-  const archiveSrc = path.join(__dirname, '..', '..', 'Mineradio', 'public', 'default-user-fx-archive.json');
+  const archiveSrc = path.join(BASE, 'public', 'default-user-fx-archive.json');
   if (fs.existsSync(archiveSrc)) {
     fs.copyFileSync(archiveSrc, path.join(__dirname, '..', 'public', 'default-user-fx-archive.json'));
     console.log('✅ Copied default-user-fx-archive.json');

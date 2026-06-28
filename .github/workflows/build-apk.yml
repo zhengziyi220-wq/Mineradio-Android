@@ -17,7 +17,7 @@ jobs:
       uses: actions/checkout@v4
       with:
         repository: XxHuberrr/Mineradio
-        path: ../Mineradio
+        path: _upstream
 
     - name: Setup Node.js
       uses: actions/setup-node@v4

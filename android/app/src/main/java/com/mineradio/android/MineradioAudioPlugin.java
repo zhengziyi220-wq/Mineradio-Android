@@ -172,18 +172,9 @@ public class MineradioAudioPlugin extends Plugin {
                     .setUri(url)
                     .setMediaMetadata(metaBuilder.build());
 
-                // 设置请求头 (用于网易云/QQ 音乐认证)
-                MediaItem.RequestProperties reqProps = new MediaItem.RequestProperties();
-                java.util.Map<String, String> headerMap = new java.util.HashMap<>();
-                java.util.Iterator<String> keys = headers.keys();
-                while (keys.hasNext()) {
-                    String key = keys.next();
-                    headerMap.put(key, headers.optString(key, ""));
-                }
-                if (!headerMap.isEmpty()) {
-                    reqProps.setHeaders(headerMap);
-                    itemBuilder.setRequestProperties(reqProps);
-                }
+                // 注意: Media3 1.2.0 不支持 MediaItem.RequestProperties
+                // 请求头通过 ExoPlayer 的 HttpDataSource.Factory 设置
+                // 这里简化处理，直接构建 MediaItem
 
                 player.setMediaItem(itemBuilder.build());
                 player.prepare();

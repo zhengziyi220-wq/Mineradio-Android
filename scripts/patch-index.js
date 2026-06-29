@@ -8,10 +8,27 @@
 const fs = require('fs');
 const path = require('path');
 
+// 路径解析: 环境变量 > _upstream/ > ../Mineradio/
+const ENV_BASE = process.env.MINERADIO_SRC || '';
 const UPSTREAM_BASE = path.join(__dirname, '..', '_upstream');
 const LOCAL_BASE = path.join(__dirname, '..', '..', 'Mineradio');
-const UPSTREAM_PUBLIC = path.join(UPSTREAM_BASE, 'public', 'index.html');
-const BASE = fs.existsSync(UPSTREAM_PUBLIC) ? UPSTREAM_BASE : LOCAL_BASE;
+
+let BASE;
+if (ENV_BASE && fs.existsSync(path.join(ENV_BASE, 'public', 'index.html'))) {
+  BASE = ENV_BASE;
+  console.log('📂 Using MINERADIO_SRC:', BASE);
+} else if (fs.existsSync(path.join(UPSTREAM_BASE, 'public', 'index.html'))) {
+  BASE = UPSTREAM_BASE;
+  console.log('📂 Using _upstream:', BASE);
+} else if (fs.existsSync(path.join(LOCAL_BASE, 'public', 'index.html'))) {
+  BASE = LOCAL_BASE;
+  console.log('📂 Using ../Mineradio:', BASE);
+} else {
+  console.error('❌ Mineradio source not found!');
+  console.error('   Tried: ENV=' + ENV_BASE + ', ' + UPSTREAM_BASE + ', ' + LOCAL_BASE);
+  process.exit(1);
+}
+
 const SRC = path.join(BASE, 'public', 'index.html');
 const DEST = path.join(__dirname, '..', 'public', 'index.html');
 

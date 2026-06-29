@@ -8,16 +8,25 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout Mineradio Android
       uses: actions/checkout@v4
-      
+
     - name: Checkout Original Mineradio (frontend source)
       uses: actions/checkout@v4
       with:
         repository: XxHuberrr/Mineradio
         path: Mineradio
+
+    - name: Debug - show workspace
+      run: |
+        echo "Workspace: $GITHUB_WORKSPACE"
+        ls -la $GITHUB_WORKSPACE
+        echo "---"
+        ls $GITHUB_WORKSPACE/Mineradio/public/ 2>/dev/null || echo "Mineradio/public not found"
+        echo "---"
+        ls $GITHUB_WORKSPACE/Mineradio-Android/scripts/ 2>/dev/null || echo "scripts not found"
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -37,7 +46,9 @@ jobs:
       run: npm install
 
     - name: Patch frontend (copy & adapt index.html)
-      run: node scripts/patch-index.js
+      run: |
+        export MINERADIO_SRC="$GITHUB_WORKSPACE/Mineradio"
+        node scripts/patch-index.js
 
     - name: Sync Capacitor
       run: npx cap sync android
